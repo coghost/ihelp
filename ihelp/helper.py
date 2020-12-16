@@ -570,7 +570,7 @@ def is_file_ok(fpth):
     """
     try:
         return os.path.getsize(fpth)
-    except FileNotFoundError as _:
+    except Exception as _:
         return 0
 
 
@@ -910,65 +910,6 @@ def block_here(duration=0):
             duration -= 1
     except KeyboardInterrupt as err:
         raise SystemExit(1)
-
-
-""" http get/post """
-
-
-def do_get(url, params, to=3):
-    """
-    使用 ``request.get`` 从指定 url 获取数据
-
-    :param params: ``输入参数, 可为空``
-    :type params: dict
-    :param url: ``接口地址``
-    :type url:
-    :param to: ``响应超时返回时间``
-    :type to:
-    :return: ``接口返回的数据``
-    :rtype: dict
-    """
-    try:
-        rs = requests.get(url, params=params, timeout=to)
-        if rs.status_code == 200:
-            try:
-                return rs.json()
-            except Exception as __e:
-                # zlog.error(__e)
-                return rs.text
-    except Exception as er:
-        zlog.error('get {} ({}) with err: {}'.format(url, params, er))
-        time.sleep(0.5)
-    return {}
-
-
-def do_post(url, payload, to=3, use_json=True):
-    """
-    使用 ``request.get`` 从指定 url 获取数据
-
-    :param use_json: 是否使用 ``json`` 格式, 如果是, 则可以直接使用字典, 否则需要先转换成字符串
-    :type use_json: bool
-    :param payload: 实际数据内容
-    :type payload: dict
-    :param url: ``接口地址``
-    :type url:
-    :param to: ``响应超时返回时间``
-    :type to:
-    :return: ``接口返回的数据``
-    :rtype: dict
-    """
-    try:
-        if use_json:
-            rs = requests.post(url, json=payload, timeout=to)
-        else:
-            rs = requests.post(url, data=payload, timeout=to)
-        if rs.status_code == 200:
-            zlog.warn(rs.text)
-            return rs.json()
-    except Exception as er:
-        zlog.error('post to {} ({}) with err: {}'.format(url, payload, er))
-        time.sleep(0.5)
-    return {}
 
 
 def get_domain_home_from_url(url):
